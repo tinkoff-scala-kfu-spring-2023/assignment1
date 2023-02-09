@@ -1,11 +1,16 @@
 # Конвертер валют и коллекции
 ## Disclamer: 
 Cборка и запуск в CI будет производиться на образе, основанном на `JVM eclipse-temurin-focal-17.0.5`. Рекомендуем использовать похожий JDK для локального запуска проекта, например от [Adoptium](https://adoptium.net/marketplace/)
+
+Сборка и последующая проверка домашки будет осуществляться только, если она залита в отдельную ветку, и открыт PR.
+
+Перед запуском тестов также проверяется форматирование кода при помощи плагина [scalafmt](https://scalameta.org/scalafmt/docs/installation.html). Поэтому проверьте корректность форматирования перед тем, как будете заливать свой код в репозиторий (либо на уровне IDE, либо при помощи scalafmt cli)
+
 ## Конвертер валют
 Ваша задача реализовать простой конвертер валют. 
 ```scala=
 object Currencies {
-    val SupportedCurrencies = List("RUB", "USD", "EUR")
+    val SupportedCurrencies = Set("RUB", "USD", "EUR")
 }
 
 class MoneyAmountShouldBePositiveException extends Exception
@@ -38,7 +43,7 @@ object CurrencyConverter {
 - Создайте новый пакет converter в src/main/scala
 - Распределите код снипета выше по файлам: ошибки в отдельный объект errors, Money отдельно, CurrencyConverter и Currencies отдельно
 - Реализуйте все функции, чье тело заменено на `???`. `Money` не может иметь негативное количество (`amount`). Операции с `Money` не могут быть выполнены с различными валютами.
-- Создайте объект-компаньон `Money`, и реализуйте метод `def apply(amount: BigDecimal, currency: String)`, так называемый смарт-конструктор. Метод должен проверять:
+- Создайте [объект-компаньон](https://docs.scala-lang.org/overviews/scala-book/companion-objects.html) `Money`, и реализуйте метод `def apply(amount: BigDecimal, currency: String)`, так называемый смарт-конструктор. Метод должен проверять:
   - `amount` должен быть неотрицательным или бросать исключение `MoneyAmountShouldBePositiveException`
   - `currency` должна содержаться в `CurrencyRate.SupportedCurrencies`, иначе бросать `UnsupportedCurrencyException`
 - `exchange` не может быть вызван между одинаковыми валютами, иначе бросать `WrongCurrencyException`
@@ -77,5 +82,5 @@ class CurrencyConverterSpec extends AnyFlatSpec with Matchers {
   }
 }
 ```
-Запустить тесты можно через IDE – слева от названия класса и каждого теста отдельно будет зеленая кнопка 'Play'. Также можно запустить через sbt shell используя команду `test`. Попробуйте оба способа, так как IDE может не всегда корректно подтягивать тесты для запуска.
+- Запустить тесты можно через IDE – слева от названия класса и каждого теста отдельно будет зеленая кнопка 'Play'. Также можно запустить через sbt shell используя команду `test`. Попробуйте оба способа, так как IDE может не всегда корректно подтягивать тесты для запуска.
 - Напишите тесты на остальные возможные результаты функции `exchange` и методов `Money` и его конструктора. Не забудьте протестировать возможные исключения
